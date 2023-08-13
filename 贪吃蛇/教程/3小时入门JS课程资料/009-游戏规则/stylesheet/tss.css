@@ -1,0 +1,99 @@
+/* 贪食蛇样式 */
+/* 样式清零 */
+*{
+    margin: 0;
+    padding:0;
+}
+.tss-container{
+    width: 800px;
+    height: 600px;
+    background-color: #000;
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    border: 4px dashed #ddd;
+    border-top: none;
+}
+.scoreboard-wrap{
+    width: 100%;
+    height: 40px;
+    background-color: #000;
+    position: absolute;
+    top: -46px;
+    border: 4px dashed #ddd;
+    border-bottom: 2px solid #ddd;
+    left: -4px;
+    overflow: hidden;
+}
+.s-icon,.t-icon{
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    margin-top: 5px;
+    margin-left: 5px;
+    background-size: cover;
+}
+.s-icon{
+    background-image: url(../icon/蛇.png);
+}
+.t-icon{
+    background-image: url(../icon/时间.png);
+    top: 3px;
+    position: relative;
+}
+.score-text{
+    display: inline-block;
+    color: #fff;
+    font-size: 30px;
+    position:absolute;
+    font-family: fantasy;
+    top: 3px;
+}
+.duration{
+    position: absolute;
+    right: 20px;
+    top: 0;
+    font-family: fantasy;
+    color: #fff;
+    font-size: 30px;
+}
+.tss-wrap{
+    width: 800px;
+    height: 600px;
+    overflow: hidden;
+    position: relative;
+}
+.tss-head{
+    width: 20px;
+    height: 20px;
+    background-color:crimson;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 999;
+}
+.tss-head.right{
+    border-radius: 0 10px 10px 0;
+}
+.tss-head.bottom{
+    border-radius: 0 0 10px 10px;
+}
+.tss-head.top{
+    border-radius:  10px 10px 0  0;
+}
+.tss-head.left{
+    border-radius:  10px 0  0 10px ;
+}
+
+.tss-body{
+    width: 20px;
+    height: 20px;
+    background-color: #fff;
+    position: absolute;
+    box-sizing: border-box;
+    border: 5px dashed #ddd;
+    border-radius: 2px;
+}   

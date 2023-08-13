@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        // 1. 贪食蛇数组 : 
+        var tss_arr = [ 0 , 0 , 0 , 0 , 0 , 0 ];
+        // 2. 蛇头的left值; 
+        var left = 0;
+
+        // 贪食蛇运动函数 : 
+        function move(){
+            // 3. left 值自增 : 
+            left += 20;
+            // 4. 给蛇头进行赋值 : 
+            // - 数组最后一项的下标 : arr.length - 1
+            tss_arr[ tss_arr.length - 1 ] = left;
+            
+            console.log( tss_arr );
+            // 5. 编写跟随循环 : 
+            // 注意 : 因为数组的最后一项已经完成赋值了， 所以我们忽略最后一项的遍历! 通过 tss_arr.length - 1 来完成的;
+            for(var i = 0 ; i < tss_arr.length - 1 ; i ++){
+                // 当前数组项等于后面的数组值!
+                tss_arr[i] = tss_arr[ i + 1 ]; 
+            }
+        }
+
+        setInterval( move , 500 );
+
+    </script>
+</body>
+</html>

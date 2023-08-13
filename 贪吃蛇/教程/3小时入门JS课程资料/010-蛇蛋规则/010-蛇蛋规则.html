@@ -1,0 +1,295 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>千锋教育-贪食蛇</title>
+    <link rel="stylesheet" href="./stylesheet/tss.css">
+</head>
+
+<body>
+    <!-- 整体容器 -->
+    <div class="tss-container">
+        <!-- 计分板 -->
+        <div class="scoreboard-wrap">
+            <!-- 得分 -->
+            <div class="score">
+                <i class="s-icon"></i>
+                <span class="score-text">0</span>
+            </div>
+            <!-- 游戏时长 -->
+            <div class="duration">
+                <i class="t-icon"></i>
+                <!-- 分钟 -->
+                <span class="sec">00</span>
+                <!-- 间隔 -->
+                <span>:</span>
+                <!-- 秒钟 -->
+                <span>00</span>
+            </div>
+        </div>
+        <!-- 活动区域 -->
+        <div class="tss-wrap">
+            <!-- 贪食蛇 -->
+            <div class="tss-head right"></div>
+            <!-- 贪食蛇蛇身 -->
+            <div class="tss-body"></div>
+            <div class="tss-body"></div>
+            <div class="tss-body"></div>
+            <div class="tss-body"></div>
+            <div class="tss-body"></div>
+        </div>
+    </div>
+    <script>
+        // 需求 : 控制器功能优化:  
+        // - 贪食蛇的所有数据全部升级成对象形式 ; 
+
+        // 1. 贪食蛇数组 : 
+        var tss_arr = [
+            { left: 0, top: 0 },
+            { left: 0, top: 0 },
+            { left: 0, top: 0 },
+            { left: 0, top: 0 },
+            { left: 0, top: 0 },
+            { left: 0, top: 0 }
+        ];
+        // 注意 : tss_arr 最后一项数据代表蛇头的left; 
+        var tss_doms = document.querySelectorAll(".tss-wrap div");
+        var tss_head_dom = document.querySelector(".tss-head");
+        var tss_wrap_dom = document.querySelector(".tss-wrap");
+        // console.log( tss_doms , tss_arr );
+        // 解决方案 : 把 tss_arr 倒序! 
+        // 注意 : 为了避免数组使用存在隐患 , 我们克隆一个新数组然后再进行倒序! 
+        // arr.slice() 
+        // var tss_reverse = tss_arr.slice().reverse();
+
+        // 2. 蛇头的left值; 
+        // 升级 : 蛇头的位置对象 
+        // var left = 0;
+        var tss_head = {
+            left: 0,
+            top: 0
+        }
+        // 贪食蛇运动方向变量 
+        // 默认向右运动 : 
+        var tss_turn = 39;
+        // 定义好运动方向的对象 : 
+        // 对象的key值变成tss_turn的数据: 
+        var tss_control = {
+            // 左: left += -20
+            37 : {
+                left : -20 , 
+                top : 0 ,
+                class : "left"
+            },
+            // 上: top  += -20 
+            38 : {
+                left : 0 , 
+                top : -20,
+                class : "top"
+            },
+            // 右: left += 20
+            39 : {
+                left : 20 , 
+                top : 0 ,
+                class : "right"
+            },
+            // 下: top  += 20
+            40 : {
+                left : 0 , 
+                top : 20 ,
+                class : "bottom"
+            }
+        } 
+        
+        // 1. 贪食蛇咬尾巴逻辑; 
+        //  - 蛇头; 
+        //  - 蛇身体; 
+        //  判定的逻辑 : 蛇头的位置和社身体的位置完全重合; 
+        // 2. 贪食蛇蛇头撞墙逻辑; 
+
+        // 贪食蛇运动函数 : 
+        function move() {
+            eggDetection( tss_head );
+            // 3. left 值自增 : 
+            // 升级 : 贪食蛇蛇头位置改变; 
+            // 升级 : 要根据 tss_control 和 tss_turn 取出的数据来完成蛇头位置的改变; 
+            tss_head.left += tss_control[tss_turn].left;
+            tss_head.top  += tss_control[tss_turn].top ;
+            
+            // 添加蛇头类名改变蛇头朝向!
+            tss_head_dom.classList.remove("left" ,"right" ,"top" , "bottom");
+            tss_head_dom.classList.add( tss_control[tss_turn].class )
+            // 4. 给蛇头进行赋值 : 
+            // - 数组最后一项的下标 : arr.length - 1
+            // 升级 : 原本的left变量名升级为 tss_head 
+            tss_arr[tss_arr.length - 1] = tss_head;
+            // 倒序数组: 
+            var tss_reverse = tss_arr.slice().reverse();
+            // tss_resverse : 
+            // - 蛇头 : tss_reverse[0];
+            // - 蛇身体 : tss_reverse.slice(1) : [ 1,2,3,4,5,6,8 ];
+            // - 比对 : 蛇头和每个蛇身体进行比对, 如果位置完全相同那么我们就终止游戏! 
+            // 碰撞检测 : 
+            collisionDetection( tss_reverse )
+            
+            // 给dom对象进行赋值 : 
+            // 升级 : 我们操作dom对象的left值和top值; 
+            for (var i = 0; i < tss_doms.length; i++) {
+                tss_doms[i].style.left = tss_reverse[i].left + "px";
+                tss_doms[i].style.top = tss_reverse[i].top + "px";
+            }
+            // 5. 编写跟随循环 : 
+            // 注意 : 因为数组的最后一项已经完成赋值了， 所以我们忽略最后一项的遍历! 通过 tss_arr.length - 1 来完成的;
+            // 升级 : 之前数组项是数字, 现在的数组项是对象，我们不能直接赋值了， 我们要分别对left值属性和top值属性进行赋值! 
+            for (var i = 0; i < tss_arr.length - 1; i++) {
+                // 当前数组项等于后面的数组值!
+                tss_arr[i].left = tss_arr[i + 1].left;
+                tss_arr[i].top = tss_arr[i + 1].top;
+            }
+        }
+        var t = setInterval(move, 100);
+
+        // 碰撞检测函数 : 
+        function collisionDetection( arr ){
+            // 蛇头信息: 
+            var tss_head = arr[0];
+            // 蛇身体信息 : 
+            var tss_bodys = arr.slice(1);
+
+            // 比对 : 
+            for(var i = 0 ; i < tss_bodys.length ; i ++){
+                // 贪食蛇蛇头的位置信息和每个贪食蛇身体进行比对; 
+                if( tss_head.left === tss_bodys[i].left && tss_head.top === tss_bodys[i].top ){
+                    // 咬着身体了 
+                    console.log( "游戏结束" );
+                    // 终止定时器贪食蛇就停止运动了! 
+                    clearInterval(t);
+                }
+            }
+            // 撞墙逻辑其实是边界检测逻辑 : 
+            // left最小值是 0 , 最大值是800;
+            // top 最小值是 0 , 最大值是600;
+            
+            if( tss_head.left < 0 || tss_head.left > 800 || tss_head.top < 0 || tss_head.top > 600 ){
+                console.log( "游戏结束" );
+                // 终止定时器贪食蛇就停止运动了! 
+                clearInterval(t);
+            }
+        }
+
+        // 问题 : 通过事件控制贪食蛇运动方向 ; 
+        document.onkeydown = function (e) {
+            // 事件对象 : 
+            // console.log( e.keyCode );
+            // 37 左 38 上 39 右 40 下
+            // console.log("键盘事件触发");
+            // 编写控制器逻辑 : 
+            // - 1. 当前贪食蛇的朝向;     tss_turn 
+            // - 2. 贪食蛇即将改变的朝向;  e.keyCode
+
+            // 逻辑判断 : 
+            // 如果当前的方向是向左的，我们要改变的朝向是向右的我们就要终止程序执行; 
+            // 终止程序执行 : return 
+            if( tss_turn === 37 && e.keyCode === 39 ){
+                return
+            }
+            if( tss_turn === 38 && e.keyCode === 40 ){
+                return
+            }
+            if( tss_turn === 39 && e.keyCode === 37 ){
+                return
+            }
+            if( tss_turn === 40 && e.keyCode === 38 ){
+                return
+            }
+
+
+            
+            if( e.keyCode >= 37 && e.keyCode <= 40 ){
+                tss_turn = e.keyCode;
+                // 修改蛇头样式 : 
+                // dom + 类名修改工具; 
+
+                // dom类名修改工具 : 
+                // classList : 这个工具可以方便的帮我们实现dom对象的类名删增; 
+                // tss_head_dom.classList.remove("left" ,"right" ,"top" , "bottom");
+                // tss_head_dom.classList.add( tss_control[tss_turn].class )
+            }
+        }
+        
+        // 创建蛇蛋 : 
+        // 1. 创建蛇蛋数据解构 ; 
+        // 2. 创建dom结构; 
+        // 3. 写入蛇蛋结构数据; 
+        var egg = {
+            left : 0 ,
+            top : 0 ,
+            class : "tss-egg",
+            // document.createElement( 标签类型 )
+            dom : document.createElement("span") 
+        }
+
+        function createEgg(){
+            // 创建贪食蛇随机位置 : 
+            egg.left = parseInt( Math.random() * 40 ) * 20;
+            egg.top  = parseInt( Math.random() * 30 ) * 20;
+
+            // 我们的所有数据都要作用在dom结构之上! 
+            egg.dom.style.left = egg.left + "px";
+            egg.dom.style.top = egg.top  + "px";
+
+            egg.dom.classList.add( egg.class );
+
+            // 把dom结构放入到页面之中; 
+            // dom.appendChild() 工具来完成; 
+            tss_wrap_dom.appendChild( egg.dom );
+        }
+
+        createEgg();
+
+        // 吃蛋检测 : 
+        function eggDetection( head ){
+            // 如果蛇头和蛇蛋重合了，那么我们就判定当前吃蛋了! 
+            if( head.left === egg.left && head.top === egg.top ){
+                console.log("吃蛋了");
+                // 1. 蛇蛋重新随机位置; 
+                // 2. 让贪食蛇的尾巴变长;
+                eatEgg();
+            }
+        }
+
+        function eatEgg(){
+            createEgg();
+            createBody();
+        }
+
+        function createBody(){
+            // 1. 创建蛇身体dom结构; 
+            // 2. 我们把数据放入tss_arr 数组之中; 
+            var body = document.createElement("div");
+            body.classList.add("tss-body");
+
+            body.style.display = "none";
+            setTimeout( function(){
+                body.style.display = "block";
+            } , 100)
+            
+            tss_wrap_dom.appendChild( body );
+            // 更新一下新增的dom结构，放到 tss_doms 元素组之中; 
+            tss_doms = document.querySelectorAll(".tss-wrap div");
+            // 把新增的贪食蛇身体放入到tss_arr 之中; 
+            tss_arr.unshift({
+                left : 0 ,
+                top : 0
+            })
+        }
+
+
+    </script>
+</body>
+
+</html>

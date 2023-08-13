@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .box{
+            width: 100px;
+            height: 100px;
+            background-color: #ddd;
+            margin: 10px;
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <div class="box" style="background-color: hotpink;">hello world</div>
+    <div class="box"></div>
+    <div class="box"></div>
+    <div class="box"></div>
+    <script>
+        // document.querySelector 
+        // document.querySelectorAll 
+
+        var box = document.querySelector(".box");
+        var boxs = document.querySelectorAll(".box");
+
+        console.log( box );
+        console.log( boxs );
+
+        box.style.backgournd = "#ddd";
+        box.style.left = "100px";
+    </script>
+</body>
+</html>
